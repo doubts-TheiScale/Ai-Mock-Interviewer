@@ -13,3 +13,11 @@ SpeechRecognition
 pyaudio 
 transformers
 torch  
+torch
+streamlit
+deep-translator
+gTTS
+pydub
+speechrecognition
+transformers
+streamlit-option-menu
