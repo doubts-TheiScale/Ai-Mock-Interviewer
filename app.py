@@ -69,10 +69,10 @@ st.session_state.user_input=0
 st.markdown(
     """
     <style>
-
+    /* Target the logo image in the sidebar */
     [alt="Logo"] {
-        height: 90px;
-        width: auto;  
+        height: 600px; /* Adjust this to your desired height */
+        width: auto;  /* Maintain aspect ratio */
         
     }
     .block-container {
@@ -89,7 +89,7 @@ with col1:
     <style>
     @media only screen and (max-width: 959px) {
         img {
-            max-width: 700px;
+            max-width: 600px;
             height: auto;
         }
     }
