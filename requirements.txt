@@ -7,7 +7,7 @@ streamlit-lottie
 python-dotenv
 requests
 gTTS
-pydub
+
 edge-tts
 SpeechRecognition
 pyaudio 
