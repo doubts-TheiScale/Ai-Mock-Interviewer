@@ -120,7 +120,7 @@ def login():
                         )
 
         phone_number=st.text_input("Enter Phone number:")
-        email=st.text_input("Enter Email:")
+        st.session_state.email=st.text_input("Enter Email:")
 
         submitted = st.form_submit_button("Log in")
         
@@ -340,7 +340,8 @@ if st.session_state.logged_in:
                         q_no=q_no,
                         question=st.session_state.alredy_asked[-2],
                         answer=user_input,
-                        feedback=score
+                        feedback=score,
+                        email=st.session_state.email
                     )
                 # Show feedback on UI
                 
@@ -480,7 +481,8 @@ Other Instructions:
                         q_no=q_no,
                         question=st.session_state.alredy_asked[-2],
                         answer=user_input,
-                        feedback=score
+                        feedback=score,
+                        email=st.session_state.email
                     )
                 # Show feedback on UI
                 
