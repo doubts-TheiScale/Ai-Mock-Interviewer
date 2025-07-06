@@ -125,7 +125,7 @@ def login():
         submitted = st.form_submit_button("Log in")
         
         if submitted:
-            if st.session_state.user_name and st.session_state.difficulty_level and phone_number and email:
+            if st.session_state.user_name and st.session_state.difficulty_level and phone_number and st.session_state.email:
                 st.success("Login successful")
                 st.session_state.logged_in = True
                 st.rerun()
