@@ -1,4 +1,4 @@
-streamlit-audio-recorder
+
 langchain
 langchain-groq
 streamlit
