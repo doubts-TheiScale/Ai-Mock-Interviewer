@@ -1,0 +1,15 @@
+
+langchain
+langchain-groq
+streamlit
+streamlit-option-menu
+streamlit-lottie
+python-dotenv
+requests
+gTTS
+pydub
+edge-tts
+SpeechRecognition
+pyaudio 
+transformers
+torch  
