@@ -46,9 +46,9 @@ def connect_to_sheet():
 sheet = connect_to_sheet()
 
 
-def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback):
+def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback,email):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    row = [student_name, interview_type, q_no, question, answer, feedback, timestamp]
+    row = [student_name, interview_type, q_no, question, answer, feedback, timestamp,email]
     sheet.append_row(row)
 
 
