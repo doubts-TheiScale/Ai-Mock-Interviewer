@@ -21,7 +21,6 @@ load_dotenv()
 groq_key = st.secrets["openai"]["api_key"]
 users = os.getenv("User_names").split(",")
 passwords = os.getenv("Passwords").split(",")
-
 user=""
 st.session_state.n_ques=0
 
@@ -46,9 +45,9 @@ def connect_to_sheet():
 sheet = connect_to_sheet()
 
 
-def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback,email):
+def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    row = [student_name, interview_type, q_no, question, answer, feedback, timestamp,email]
+    row = [student_name, interview_type, q_no, question, answer, feedback, timestamp]
     sheet.append_row(row)
 
 
@@ -65,6 +64,7 @@ def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback,
 
 st.set_page_config(page_title="Ai Mock Interview",layout="centered")
 st.session_state.user_input=0
+
 
 st.markdown(
     """
@@ -128,9 +128,10 @@ def login():
             if st.session_state.user_name and st.session_state.difficulty_level and phone_number and st.session_state.email:
                 st.success("Login successful")
                 st.session_state.logged_in = True
-                st.rerun()
+                st.session_state.alredy_asked=["none"]
                 st.session_state.next_question=0
-                st.session_state.alredy_asked=[None]
+
+                st.rerun()
 
             else:
                 st.error("Enter Every Details")
@@ -186,98 +187,100 @@ if st.session_state.logged_in:
         if "agent" not in st.session_state:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             system_prompt = f"""
-            You are an AI mock interview agent for data analyst students. You will conduct a 20-question technical interview strictly from the approved syllabus.
+You are an AI mock interview agent for data analyst students. You will conduct a 20-question technical interview strictly from the approved syllabus.
 
-        The interview should be customized based on the following user information:
+The interview should be customized based on the following user information:
 
-        - Name: {st.session_state.user_name}
-        - Experience Level: {st.session_state.user_exp}  (e.g., "Fresher", "0-1 years", "1-3 years", etc.)
-        - Difficulty Level Selected by User: {st.session_state.difficulty_level} (e.g., "Beginner", "Intermediate", "Advanced")
+- Name: {st.session_state.user_name}
+- Experience Level: {st.session_state.user_exp}  (e.g., "Fresher", "0-1 years", "1-3 years", etc.)
+- Difficulty Level Selected by User: {st.session_state.difficulty_level} (e.g., "Beginner", "Intermediate", "Advanced")
 
-        Use this information to:
-        - Adjust the complexity of questions based on the difficulty level selected.
-        - Choose appropriate topics considering the user’s experience.
-        - Greet the user by name during the first question (e.g., “Hi {st.session_state.user_name}, let's begin with...”).
+Use this information to:
+- Adjust the complexity of questions based on the difficulty level selected.
+- Choose appropriate topics considering the user’s experience.
+- Greet the user by name during the first question (e.g., “Hi {st.session_state.user_name}, let's begin with...”)
 
-        ---
+---
 
-        You must follow this structure:
+You must follow this structure:
 
-        1. Ask questions one by one, numbered clearly.
-        Format each question exactly like this:
-        Q<number>: <question text>
+1. Ask questions one by one, numbered clearly.
+Format each question exactly like this:
+Q<number>: <question text>
 
-        2. Only ask questions from the following domains:
-        - Python (from the approved syllabus below) and advanced questions 
-        - SQL
-        - Power BI
-        - Excel
+2. Only ask questions from the following domains:
+- Python (from the approved syllabus below) and advanced questions 
+- SQL
+- Power BI
+- Excel
 
-        Python Topics (LIMIT STRICTLY to these):
-        - Python Basics (introduction, variables, operators)
-        - Built-in Functions
-        - Conditional Statements
-        - Loops
-        - User-Defined Functions
-        - Strings, Lists, Tuples, Sets, Dictionaries
-        - NumPy, Pandas, Matplotlib
-        - Projects (Covid-19 Dashboard, Image Scraping, WhatsApp Chat Analysis)
+Python Topics (LIMIT STRICTLY to these):
+- Python Basics (introduction, variables, operators)
+- Built-in Functions
+- Conditional Statements
+- Loops
+- User-Defined Functions
+- Strings, Lists, Tuples, Sets, Dictionaries
+- NumPy, Pandas, Matplotlib
+- Projects (Covid-19 Dashboard, Image Scraping, WhatsApp Chat Analysis)
 
-        **Important Instruction:** Do NOT ask any Python questions outside the above topics. No OOP, decorators, threading, classes, etc., unless explicitly listed.
+**Important Instruction:** Do NOT ask any Python questions outside the above topics. No OOP, decorators, threading, classes, etc., unless explicitly listed.
 
-        SQL Topics:
-        - SELECT, WHERE, GROUP BY, ORDER BY
-        - JOINs
-        - Aggregations
-        - Window Functions
-        - Subqueries, CTEs
+SQL Topics:
+- SELECT, WHERE, GROUP BY, ORDER BY
+- JOINs
+- Aggregations
+- Window Functions
+- Subqueries, CTEs
 
-        Power BI Topics:
-        - Power Query Editor
-        - Creating and formatting visuals
-        - Slicers and filters
-        - Dashboards
-        - DAX basics
+Power BI Topics:
+- Power Query Editor
+- Creating and formatting visuals
+- Slicers and filters
+- Dashboards
+- DAX basics
 
-        Excel Topics:
-        - VLOOKUP, IF statements
-        - Pivot Tables
-        - Conditional Formatting
-        - Data Validation
-        - Excel charts and formulas
+Excel Topics:
+- VLOOKUP, IF statements
+- Pivot Tables
+- Conditional Formatting
+- Data Validation
+- Excel charts and formulas
 
-        ---
+---
 
-        3. For each answer, respond with short feedback AND a score out of 10 using this format:
+3. For each answer:
+- Carefully evaluate the user's explanation and assess both correctness and clarity.
+- Only then respond with a brief, specific feedback AND a score out of 10 using this strict format:
 
-        - Feedback: <short sentence>
-        - Score: <x>/10
+- Feedback: <short sentence>
+- Score: <x>/10
 
-        Example:
-        Feedback: That’s mostly correct but you missed the explanation of joins.
-        Score: 7/10
+Be objective and critical. Avoid lenient scoring. Give low scores when important concepts are missing or incorrectly explained.
 
+Example:
+Feedback: That’s mostly correct but you missed the explanation of joins.
+Score: 7/10
 
-        4. After 19 technical questions, ask this as the 20th question:
-        Q20: Briefly explain your most recent project in data analytics or Python.
+4. After 19 technical questions, ask this as the 20th question:
+Q20: Briefly explain your most recent project in data analytics or Python.
 
-        5. After Q20, summarize the interview with:
-        - Overall rating (Ready / Needs More Practice / Below Average)
-        - One-sentence final feedback
+5. After Q20, summarize the interview with:
+- Overall rating (Ready / Needs More Practice / Below Average)
+- One-sentence final feedback
 
-        -----------------------------------------------------
+-----------------------------------------------------
 
-        Other rules:
-        - Do not simulate answers.
-        - Ask follow-up questions only if relevant.
-        - SQL, Excel, and Power BI topics must be entry-level or beginner-friendly unless difficulty is set to "Advanced".
-        - Always keep track of the questions already asked, and do not repeat any question.
-        - The first question must be randomly chosen from the eligible domains and should vary each time. Ensure variety across interviews.
+Other rules:
+- Do not simulate answers.
+- Ask follow-up questions only if relevant.
+- SQL, Excel, and Power BI topics must be entry-level or beginner-friendly unless difficulty is set to "Advanced".
+- Always keep track of the questions already asked, and do not repeat any question.
+- The first question must be randomly chosen from the eligible domains and should vary each time. Ensure variety across interviews.
 
-        Be brief, professional, and stick strictly to the format.
+Be brief, professional, and stick strictly to the format.
+"""
 
-
-            """
             memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
             memory.chat_memory.messages.append(SystemMessage(content=system_prompt))
             st.session_state.agent = initialize_agent(
@@ -304,8 +307,6 @@ if st.session_state.logged_in:
         uploaded_file = c1.audio_input("Record a Asnwer here")
         c2.write(" ")
         c2.write(" ")
-        st.write(st.session_state.next_question)
-        st.write(st.session_state.alredy_asked)
         if c2.button('Confirm Audio'):
             if uploaded_file:
                 user_input = transcribe(uploaded_file)
@@ -335,17 +336,16 @@ if st.session_state.logged_in:
 
                 score = int(score_match.group(1)) if score_match else None
                 feedback = feedback_match.group(1).strip() if feedback_match else "No feedback"
-                
+                print(st.session_state.alredy_asked[-2])
                 if st.session_state.next_question:
                     q_no, question_text = st.session_state.next_question[0]
                     log_to_sheet(
                         student_name=st.session_state.user_name,
                         interview_type="Technical",
                         q_no=q_no,
-                        question=st.session_state.alredy_asked[-2],
+                        question=st.session_state.alredy_asked[-2][0][1],
                         answer=user_input,
-                        feedback=score,
-                        email=st.session_state.email
+                        feedback=score
                     )
                 # Show feedback on UI
                 
@@ -362,7 +362,7 @@ if st.session_state.logged_in:
         if "agent1" not in st.session_state:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             system_prompt = f"""
-You are an AI mock interview agent conducting an **HR interview** for data analyst students. You will conduct a 20-question HR interview based strictly on behavioral, situational, and career-oriented topics.
+You are an AI mock interview agent conducting an **HR interview** for data analyst students. You will conduct a 10-question HR interview based strictly on behavioral, situational, and career-oriented topics.
 
 The interview should be customized based on the following user information:
 
@@ -387,7 +387,7 @@ Intro: Hi {st.session_state.user_name}, before we begin the HR interview, could 
 Q1: <question text>
 Q2: <question text>
 ... up to ...
-Q20: <question text>
+Q10: <question text>
 
 3. Question Domains (rotate between these):
 - Self-introduction and background
@@ -410,7 +410,7 @@ Q20: <question text>
 5. Question 20 must always be:
 Q20: Why should we hire you for this role as a data analyst?
 
-6. After Q20, summarize the interview with:
+6. After Q10, summarize the interview with:
 - Overall Rating: Excellent / Good / Needs More Practice / Below Average
 - Final Feedback: One sentence based on the overall performance
 
@@ -472,7 +472,7 @@ Other Instructions:
                 pattern = r"Q(\d+):\s*(.+)"
                 st.session_state.next_question = re.findall(pattern, response)
                 st.session_state.alredy_asked.append(st.session_state.next_question)
-                st.subheader(f"Next question is :blue[{st.session_state.next_question}] ")
+                st.subheader(f"Next question is :blue[{st.session_state.next_question[0][1]}] ")
                 match = re.search(r"Score:\s*(\d{1,2})/10", response)
                 score=0
                 if match:
@@ -483,10 +483,9 @@ Other Instructions:
                         student_name=st.session_state.user_name,
                         interview_type="HR",
                         q_no=q_no,
-                        question=st.session_state.alredy_asked[-2],
+                        question=st.session_state.alredy_asked[-2][0][1],
                         answer=user_input,
-                        feedback=score,
-                        email=st.session_state.email
+                        feedback=score
                     )
                 # Show feedback on UI
                 
