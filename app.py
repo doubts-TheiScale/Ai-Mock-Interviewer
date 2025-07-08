@@ -129,6 +129,8 @@ def login():
                 st.success("Login successful")
                 st.session_state.logged_in = True
                 st.rerun()
+                st.session_state.next_question=0
+                st.session_state.alredy_asked=[None]
 
             else:
                 st.error("Enter Every Details")
@@ -302,7 +304,7 @@ if st.session_state.logged_in:
         uploaded_file = c1.audio_input("Record a Asnwer here")
         c2.write(" ")
         c2.write(" ")
-        st.write(st.session_state.alredy_asked)
+        st.write(st.session_state.next_question)
         st.write(st.session_state.alredy_asked)
         if c2.button('Confirm Audio'):
             if uploaded_file:
