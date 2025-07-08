@@ -302,6 +302,8 @@ if st.session_state.logged_in:
         uploaded_file = c1.audio_input("Record a Asnwer here")
         c2.write(" ")
         c2.write(" ")
+        st.write(st.session_state.alredy_asked)
+        st.write(st.session_state.alredy_asked)
         if c2.button('Confirm Audio'):
             if uploaded_file:
                 user_input = transcribe(uploaded_file)
