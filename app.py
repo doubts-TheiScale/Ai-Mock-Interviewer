@@ -21,10 +21,10 @@ load_dotenv()
 groq_key = st.secrets["openai"]["api_key"]
 users = os.getenv("User_names").split(",")
 passwords = os.getenv("Passwords").split(",")
-st.session_state.next_question=0
+
 user=""
 st.session_state.n_ques=0
-st.session_state.alredy_asked=["none"]
+
 user_input=0
 llm = ChatGroq(model="llama-3.3-70b-versatile",groq_api_key=groq_key)
 tools = []
