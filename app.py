@@ -47,7 +47,7 @@ sheet = connect_to_sheet()
 
 def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    row = [student_name, interview_type, q_no, question, answer, feedback, timestamp ]
+    row = [student_name, interview_type, q_no, question, answer, feedback, timestamp,st.session_state.email,st.session_state.difficulty_level ]
     sheet.append_row(row)
 
 def ensure_string(value):
@@ -121,7 +121,7 @@ def login():
         st.session_state.user_age=22
         st.session_state.user_exp=st.text_input("Enter User's Exprence with detail NaN if none :")
         st.session_state.difficulty_level = st.selectbox(
-                            "How would you like to be contacted?",
+                            "How would you like difficulty_level?",
                             ("Beginner", "Intermediate", "Advanced"),
                         )
 
