@@ -349,7 +349,7 @@ Be brief, professional, and stick strictly to the format.
                         student_name=st.session_state.user_name,
                         interview_type="Technical",
                         q_no=q_no,
-                        question=ensure_string(st.session_state.alredy_asked[-2][0][1]),
+                        question=ensure_string(st.session_state.alredy_asked[-2][0]),
                         answer=user_input,
                         feedback=score
                     )
@@ -489,7 +489,7 @@ Other Instructions:
                         student_name=st.session_state.user_name,
                         interview_type="HR",
                         q_no=q_no,
-                        question=ensure_string(st.session_state.alredy_asked[-2][0][1]),
+                        question=ensure_string(st.session_state.alredy_asked[-2][0]),
                         answer=user_input,
                         feedback=score
                     )
