@@ -112,7 +112,7 @@ def login():
     
     with st.form("login_form"):
         st.session_state.user_name=st.text_input("Enter Username:")
-        st.session_state.user_age=st.number_input("Enter users Age")
+        st.session_state.user_age=22
         st.session_state.user_exp=st.text_input("Enter User's Exprence with detail NaN if none :")
         st.session_state.difficulty_level = st.selectbox(
                             "How would you like to be contacted?",
