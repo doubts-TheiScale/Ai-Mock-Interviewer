@@ -488,7 +488,7 @@ Other Instructions:
                 pattern = r"Q(\d+):\s*(.+)"
                 st.session_state.next_question = re.findall(pattern, response)
                 st.session_state.alredy_asked.append(st.session_state.next_question)
-                st.subheader(f"Next question is :blue[{st.session_state.next_question[0][1]}] ")
+                st.subheader(f"Next question is :blue[{st.session_state.next_question[0]}] ")
                 match = re.search(r"Score:\s*(\d{1,2})/10", response)
                 score=0
                 if match:
