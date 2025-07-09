@@ -50,7 +50,13 @@ def log_to_sheet(student_name, interview_type, q_no, question, answer, feedback)
     row = [student_name, interview_type, q_no, question, answer, feedback, timestamp ]
     sheet.append_row(row)
 
-
+def ensure_string(value):
+    if isinstance(value, list):
+        return ', '.join(str(v) for v in value)
+    elif isinstance(value, str):
+        return value
+    else:
+        return str(value)
 
 
 
@@ -483,7 +489,7 @@ Other Instructions:
                         student_name=st.session_state.user_name,
                         interview_type="HR",
                         q_no=q_no,
-                        question=st.session_state.alredy_asked[-2][0][1],
+                        question=ensure_string(st.session_state.alredy_asked[-2][0][1]),
                         answer=user_input,
                         feedback=score
                     )
