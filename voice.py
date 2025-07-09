@@ -7,6 +7,29 @@ import speech_recognition as sr
 from transformers import pipeline as pl
 import asyncio
 import edge_tts
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+
+def upload_audio_to_drive(file_path, file_name):
+    scopes = ['https://www.googleapis.com/auth/drive.file']
+    
+    # ✅ Use Streamlit secrets instead of JSON file
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"], scopes=scopes)
+    
+    drive_service = build('drive', 'v3', credentials=credentials)
+
+    file_metadata = {'name': file_name}
+    media = MediaFileUpload(file_path, mimetype='audio/wav')
+    
+    uploaded_file = drive_service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id, webViewLink'
+    ).execute()
+    
+    return uploaded_file.get('webViewLink')
 
 def text_to_speech(text, c=0, voice="en-US-JennyNeural"):
     output_file = f"output{c}.mp3"
