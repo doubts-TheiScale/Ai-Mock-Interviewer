@@ -304,13 +304,13 @@ Be brief, professional, and stick strictly to the format.
             
 
         c1,c2=st.columns([6, 1])
-        uploaded_file = c1.audio_input("Record a Asnwer here")
-        c2.write(" ")
-        c2.write(" ")
-        if c2.button('Confirm Audio'):
-            if uploaded_file:
-                user_input = transcribe(uploaded_file)
-        # user_input = st.chat_input("Ask something to the agent...")
+        # uploaded_file = c1.audio_input("Record a Asnwer here")
+        # c2.write(" ")
+        # c2.write(" ")
+        # if c2.button('Confirm Audio'):
+        #     if uploaded_file:
+        #         user_input = transcribe(uploaded_file)
+        user_input = st.chat_input("Ask something to the agent...")
         if not st.session_state.next_question:
             if st.button("Start"):
                 user_input = "Start The interview"
