@@ -14,7 +14,6 @@ from googleapiclient.http import MediaFileUpload
 def upload_audio_to_drive(file_path, file_name):
     scopes = ['https://www.googleapis.com/auth/drive.file']
     
-    # ✅ Use Streamlit secrets instead of JSON file
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"], scopes=scopes)
     
@@ -55,15 +54,15 @@ def transcribe(uploaded_file):
     audio = audio.set_frame_rate(16000).set_channels(1)
     audio.export(file_path, format="wav")
 
-    # ✅ Generate a unique file name using timestamp
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name = uploaded_file.name.replace(" ", "_")
     unique_file_name = f"{safe_name}_{timestamp}.wav"
 
     # Upload to Google Drive
-    drive_link = upload_audio_to_drive(file_path, unique_file_name)
-    st.success(f"✅ Audio uploaded to Google Drive: [View File]({drive_link})")
-
+    try:
+        drive_link = upload_audio_to_drive(file_path, unique_file_name)
+    except:
+        st.toast('warning code 1')
     # Transcribe
     recognizer = sr.Recognizer()
     with sr.AudioFile(file_path) as source:
