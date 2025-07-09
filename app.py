@@ -499,7 +499,7 @@ Other Instructions:
                         student_name=st.session_state.user_name,
                         interview_type="HR",
                         q_no=q_no,
-                        question=ensure_string(st.session_state.alredy_asked[-2][0]),
+                        question=ensure_string(st.session_state.alredy_asked[-2]),
                         answer=user_input,
                         feedback=score
                     )
